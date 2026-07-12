@@ -1,0 +1,15 @@
+{
+  "name": "@color-corpus/etl",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "import:seed": "tsx importer.ts"
+  },
+  "dependencies": {
+    "@color-corpus/db": "workspace:*",
+    "@color-corpus/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.1"
+  }
+}

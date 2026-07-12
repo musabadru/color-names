@@ -1,0 +1,9 @@
+{
+  "name": "@color-corpus/db",
+  "version": "0.1.0",
+  "private": true,
+  "main": "client.ts",
+  "dependencies": {
+    "@libsql/client": "^0.6.0"
+  }
+}
