@@ -3,10 +3,9 @@ import { db } from "@color-corpus/db";
 export async function GET() {
   try {
     const result = await db.execute(`
-      SELECT sc.id, sc.primary_name_raw as name, sc.hex_color as hex
+      SELECT sc.id, sc.primary_name_raw as name, sc.hex_color as hex, s.name as source_name
       FROM source_colors sc
       JOIN sources s ON sc.source_id = s.id
-      WHERE s.slug = 'color-name-list'
     `);
     
     return new Response(JSON.stringify(result.rows), {

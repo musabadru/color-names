@@ -60,7 +60,9 @@
     loadMoreColors();
   }
 
-  function copyToClipboard(hex: string) {
+  function copyToClipboard(e: Event, hex: string) {
+    e.preventDefault();
+    e.stopPropagation();
     navigator.clipboard.writeText(hex).then(() => {
       toastMessage = `Copied ${hex}!`;
       showToast = true;
@@ -82,11 +84,13 @@
     {#each displayedColors.slice(0, currentIndex) as color}
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <!-- svelte-ignore a11y_no_static_element_interactions -->
-      <div class="color-card" on:click={() => copyToClipboard(color.hex)}>
+      <a href={`/colors/${color.id}`} class="color-card">
         <div class="color-swatch" style="background-color: {color.hex};"></div>
         <div class="color-name">{color.name}</div>
+        <div class="color-source">{color.source_name}</div>
         <div class="color-hex">{color.hex}</div>
-      </div>
+        <button class="copy-btn" on:click={(e) => copyToClipboard(e, color.hex)}>Copy Hex</button>
+      </a>
     {/each}
   </div>
   {#if displayedColors.length === 0}
@@ -137,14 +141,21 @@
     border-bottom: 3px solid #000;
   }
   .color-name {
-    padding: 1rem 1rem 0.5rem;
+    padding: 1rem 1rem 0.2rem;
     font-weight: bold;
     font-size: 1.2rem;
     color: #000;
   }
+  .color-source {
+    padding: 0 1rem 0.5rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #666;
+  }
   .color-hex {
     padding: 0 1rem 1rem;
-    color: #666;
+    color: #333;
+    font-family: monospace;
   }
   .toast {
     position: fixed;
@@ -168,5 +179,17 @@
     text-align: center;
     font-size: 1.5rem;
     margin-top: 3rem;
+  }
+  .copy-btn {
+    margin: 0 1rem 1rem;
+    padding: 0.5rem;
+    background: #000;
+    color: #fff;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .copy-btn:hover {
+    background: #333;
   }
 </style>

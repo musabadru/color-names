@@ -1,0 +1,109 @@
+---
+export const prerender = false;
+import { db } from "@color-corpus/db";
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect('/404');
+}
+
+const sourceResult = await db.execute({
+  sql: `SELECT * FROM sources WHERE slug = ?`,
+  args: [slug]
+});
+
+if (sourceResult.rows.length === 0) {
+  return Astro.redirect('/404');
+}
+
+const source = sourceResult.rows[0];
+
+const colorsResult = await db.execute({
+  sql: `
+    SELECT sc.id, sc.primary_name_raw as name, sc.hex_color as hex
+    FROM source_colors sc
+    WHERE sc.source_id = ?
+  `,
+  args: [source.id]
+});
+
+const colors = colorsResult.rows;
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{source.name} - Color Names</title>
+    <link rel="stylesheet" href="https://unpkg.com/neobrutalismcss@latest" />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+      }
+      .nb-header {
+        background-color: #ffffff;
+        border-bottom: 4px solid #000;
+        padding: 2rem;
+        text-align: center;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+      .color-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 2rem;
+      }
+      .color-card {
+        border: 3px solid #000;
+        background-color: #fff;
+        text-decoration: none;
+        color: #000;
+        box-shadow: 5px 5px 0px #000;
+        transition: transform 0.1s, box-shadow 0.1s;
+        display: flex;
+        flex-direction: column;
+      }
+      .color-card:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 7px 7px 0px #000;
+      }
+      .color-swatch {
+        height: 150px;
+        border-bottom: 3px solid #000;
+      }
+      .color-name {
+        padding: 1rem 1rem 0.5rem;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+      .color-hex {
+        padding: 0 1rem 1rem;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="nb-header">
+      <h1>{source.name}</h1>
+      <p>{source.kind} • {source.language} • {colors.length} colors</p>
+      <a href="/sources">← Back to Sources</a>
+    </header>
+
+    <main class="container">
+      <div class="color-grid">
+        {colors.map((color) => (
+          <a href={`/colors/${color.id}`} class="color-card">
+            <div class="color-swatch" style={`background-color: ${color.hex};`}></div>
+            <div class="color-name">{color.name}</div>
+            <div class="color-hex">{color.hex}</div>
+          </a>
+        ))}
+      </div>
+    </main>
+  </body>
+</html>

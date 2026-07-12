@@ -13,10 +13,11 @@
   },
   "dependencies": {
     "@astrojs/svelte": "^9.0.1",
+    "@astrojs/vercel": "^11.0.2",
+    "@color-corpus/db": "workspace:*",
+    "@color-corpus/shared": "workspace:*",
     "astro": "^7.0.7",
     "svelte": "^5.56.4",
-    "typescript": "^6.0.3",
-    "@color-corpus/db": "workspace:*",
-    "@color-corpus/shared": "workspace:*"
+    "typescript": "^6.0.3"
   }
 }
