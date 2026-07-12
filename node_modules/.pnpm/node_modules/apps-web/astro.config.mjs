@@ -7,5 +7,13 @@ import vercel from '@astrojs/vercel';
 export default defineConfig({
   output: 'server',
   adapter: vercel(),
-  integrations: [svelte()]
+  integrations: [svelte()],
+  vite: {
+    server: {
+      fs: {
+        // Allow serving files from the monorepo root node_modules
+        allow: ['../..']
+      }
+    }
+  }
 });
