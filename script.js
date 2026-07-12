@@ -1,20 +1,38 @@
-const colors = [
-    { name: 'Neon Yellow', hex: '#FFDE59' },
-    { name: 'Hot Pink', hex: '#FF3131' },
-    { name: 'Electric Blue', hex: '#004AAD' },
-    { name: 'Cyber Green', hex: '#00BF63' },
-    { name: 'Vibrant Orange', hex: '#FF914D' },
-    { name: 'Toxic Purple', hex: '#CB6CE6' },
-    { name: 'Bubblegum', hex: '#FF66C4' },
-    { name: 'Aqua Splash', hex: '#38B6FF' },
-    { name: 'Acid Lime', hex: '#C1FF72' },
-    { name: 'Deep Magenta', hex: '#8C52FF' },
-    { name: 'Retro Red', hex: '#FF5757' },
-    { name: 'Mint Freeze', hex: '#00E676' }
-];
+let allColors = [];
+let displayedColors = [];
+const BATCH_SIZE = 50;
+let currentIndex = 0;
+let isSearching = false;
 
 const grid = document.getElementById('color-grid');
 const toast = document.getElementById('toast');
+const searchInput = document.getElementById('search-input');
+
+// Initialize
+async function init() {
+    grid.innerHTML = '<div class="loading">Fetching colors...</div>';
+    try {
+        const response = await fetch('https://unpkg.com/color-name-list@latest/dist/colornames.json');
+        allColors = await response.json();
+        
+        // Randomize the initial array so we get a good mix on load
+        // But keep a copy of the original for deterministic search if we want, 
+        // actually shuffling is fine or just show as-is. Let's show as-is to save CPU.
+        displayedColors = allColors;
+        
+        grid.innerHTML = '';
+        loadMoreColors();
+        
+        // Setup infinite scroll
+        window.addEventListener('scroll', handleScroll);
+        
+        // Setup search
+        searchInput.addEventListener('input', debounce(handleSearch, 300));
+    } catch (err) {
+        console.error('Failed to load colors:', err);
+        grid.innerHTML = '<div class="loading">Failed to load colors. Check console.</div>';
+    }
+}
 
 function showToast(message) {
     toast.textContent = message;
@@ -57,7 +75,61 @@ function createCard(color) {
     return card;
 }
 
-// Populate grid
-colors.forEach(color => {
-    grid.appendChild(createCard(color));
-});
+function loadMoreColors() {
+    if (currentIndex >= displayedColors.length) return;
+    
+    const fragment = document.createDocumentFragment();
+    const endIndex = Math.min(currentIndex + BATCH_SIZE, displayedColors.length);
+    
+    for (let i = currentIndex; i < endIndex; i++) {
+        fragment.appendChild(createCard(displayedColors[i]));
+    }
+    
+    grid.appendChild(fragment);
+    currentIndex = endIndex;
+}
+
+function handleScroll() {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    if (scrollTop + clientHeight >= scrollHeight - 200) {
+        loadMoreColors();
+    }
+}
+
+function handleSearch(e) {
+    const query = e.target.value.toLowerCase().trim();
+    
+    if (query === '') {
+        displayedColors = allColors;
+    } else {
+        displayedColors = allColors.filter(c => 
+            c.name.toLowerCase().includes(query) || 
+            c.hex.toLowerCase().includes(query)
+        );
+    }
+    
+    grid.innerHTML = '';
+    currentIndex = 0;
+    
+    if (displayedColors.length === 0) {
+        grid.innerHTML = '<div class="no-results">No colors found.</div>';
+    } else {
+        loadMoreColors();
+    }
+}
+
+// Utility: Debounce function to limit search rate
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Start
+init();

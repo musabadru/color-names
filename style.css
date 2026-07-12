@@ -26,9 +26,11 @@ body {
     box-shadow: var(--shadow-offset) var(--shadow-offset) 0 var(--shadow-color);
     padding: 2rem;
     margin: 2rem;
-    max-width: 800px;
+    width: 90%;
+    max-width: 1000px;
     text-align: center;
-    border-radius: 8px; /* Slight radius typical in some neobrutalism variations */
+    border-radius: 8px;
+    box-sizing: border-box;
 }
 
 .nb-header h1 {
@@ -41,7 +43,30 @@ body {
 .nb-header p {
     font-size: 1.2rem;
     font-weight: bold;
-    margin-bottom: 0;
+    margin-bottom: 1.5rem;
+}
+
+.search-container {
+    margin-top: 1rem;
+}
+
+#search-input {
+    width: 80%;
+    max-width: 500px;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 4px 4px 0 var(--shadow-color);
+    transition: transform 0.1s, box-shadow 0.1s;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#search-input:focus {
+    outline: none;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--shadow-color);
 }
 
 .container {
@@ -89,18 +114,28 @@ body {
 }
 
 .color-name {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 900;
     text-transform: uppercase;
     margin-bottom: 0.5rem;
+    text-align: center;
+    word-break: break-word;
 }
 
 .color-hex {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     background: #e0e0e0;
     padding: 0.2rem 0.5rem;
     border: 2px solid var(--border-color);
     font-weight: bold;
+}
+
+.loading, .no-results {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    grid-column: 1 / -1;
+    padding: 2rem;
 }
 
 .toast {
