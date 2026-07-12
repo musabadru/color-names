@@ -12,7 +12,7 @@
 ## Phase 2: Feature Enhancements
 - [ ] **Categorization, Filtering & Sorting**: Group colors by their source dataset (e.g., "Show only Japanese Traditional Colors" or "Show only XKCD survey colors"), and allow users to filter and sort the lists. This requires parsing the source data if available from the API, or mapping the datasets manually.
 - [ ] **Color Space Conversions & Details**: When a user clicks a color, show a modal or expanded view allowing them to copy the color in multiple formats (HEX, RGB, HSL, CMYK, OKLCH, OKLAB, Pantone). Also, add detailed descriptions such as the source, alternative names, and origin.
-- [ ] **Dark Mode Toggle**: While Neo-Brutalism often embraces harsh, bright backgrounds, a high-contrast dark mode variant would improve accessibility.
+- [ ] **Typography Update**: Switch to using editorial-type fonts (similar to those seen in classic Brutalist posters) to further lean into the authentic Neo-Brutalist aesthetic.
 - [ ] **Accessibility (a11y) Improvements**: Ensure contrast ratios are acceptable across the UI, and that the search bar and color cards are fully navigable via keyboard.
 
 ## Phase 3: Performance & Architecture
