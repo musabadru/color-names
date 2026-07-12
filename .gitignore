@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+local.db
+local.db-journal
+.env
+.env.*
+!.env.example
+.vercel/
+.netlify/
+.DS_Store
