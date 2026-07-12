@@ -1,6 +1,20 @@
 # Color Names Explorer
 
-A beautifully designed, Neo-Brutalist inspired static web application to search and discover thousands of named colors and their respective hex codes. 
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen.svg)](https://musabadru.github.io/color-names/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A beautifully designed, Neo-Brutalist inspired static web application to search and discover over 30,000 named colors and their respective hex codes. 
+
+[👉 **View the Live Demo**](https://musabadru.github.io/color-names/)
+
+## Quick Start
+
+To run this project locally, you don't need any build tools. Just serve the directory:
+
+1. Clone the repository: `git clone https://github.com/musabadru/color-names.git`
+2. Open `index.html` in your browser, or serve it using any local web server (e.g., `npx serve .` or `python -m http.server`).
+
+---
 
 ## Data Sources
 
