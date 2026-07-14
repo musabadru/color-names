@@ -15,7 +15,21 @@
   onMount(async () => {
     try {
       const response = await fetch('/api/colors.json');
-      allColors = await response.json();
+      if (!response.ok) {
+        const errBody = await response.text();
+        console.error('API error:', response.status, errBody);
+        error = `Failed to load colors (${response.status})`;
+        loading = false;
+        return;
+      }
+      const data = await response.json();
+      if (!Array.isArray(data)) {
+        console.error('Unexpected response:', data);
+        error = data?.error || "Unexpected response format";
+        loading = false;
+        return;
+      }
+      allColors = data;
       displayedColors = allColors;
       loadMoreColors();
       

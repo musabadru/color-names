@@ -2,17 +2,19 @@ import { db } from "@color-corpus/db";
 
 export async function GET() {
   try {
-    // Use a timeout to avoid hanging the entire 10s Vercel budget
-    const result = await Promise.race([
-      db.execute(
-        "SELECT sc.id, sc.primary_name_raw as name, sc.hex_color as hex, s.name as source_name FROM source_colors sc JOIN sources s ON sc.source_id = s.id LIMIT 5000"
-      ),
-      new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("DB query timed out after 8s")), 8000)
-      ),
-    ]);
+    const result = await db.execute(
+      "SELECT sc.id, sc.primary_name_raw as name, sc.hex_color as hex, s.name as source_name FROM source_colors sc JOIN sources s ON sc.source_id = s.id LIMIT 5000"
+    );
 
-    return new Response(JSON.stringify(result.rows), {
+    // Map to plain objects to avoid any prototype/serialization issues
+    const colors = Array.from(result.rows).map((row: any) => ({
+      id: row.id,
+      name: row.name,
+      hex: row.hex,
+      source_name: row.source_name,
+    }));
+
+    return new Response(JSON.stringify(colors), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
