@@ -34,6 +34,7 @@ async function run() {
   
   const CHUNK_SIZE = 100;
   for (let i = 0; i < data.length; i += CHUNK_SIZE) {
+    console.log(`Processing chunk ${i} to ${i + CHUNK_SIZE}...`);
     const chunk = data.slice(i, i + CHUNK_SIZE);
     const stmts: Array<{sql: string, args: any[]}> = [];
     
@@ -59,8 +60,13 @@ async function run() {
       });
     }
 
-    await db.batch(stmts, "write");
-    process.stdout.write(`\rInserted chunk ${i / CHUNK_SIZE + 1} of ${Math.ceil(data.length / CHUNK_SIZE)}`);
+    try {
+      await db.batch(stmts, "write");
+      console.log(`Inserted chunk ${Math.floor(i / CHUNK_SIZE) + 1} of ${Math.ceil(data.length / CHUNK_SIZE)}`);
+    } catch (err) {
+      console.error("Batch failed at index", i, err);
+      break;
+    }
   }
 
   console.log("\nImport process complete.");
