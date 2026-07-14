@@ -1,48 +1,72 @@
-import { createClient } from "@libsql/client/web";
 
-// Pre-render this route at build time — no serverless function needed.
-// Astro will call GET() during `astro build`, save the JSON as a static file,
-// and Vercel will serve it directly from the CDN with zero cold start.
-export const prerender = true;
-
-function getDb() {
-  let url = process.env.TURSO_DATABASE_URL;
-  const authToken = process.env.TURSO_AUTH_TOKEN;
-
-  if (!url || !authToken) {
-    throw new Error(
-      `Missing env vars at build time: TURSO_DATABASE_URL=${!!url}, TURSO_AUTH_TOKEN=${!!authToken}`
-    );
-  }
-
-  if (url.startsWith("libsql://")) {
-    url = url.replace("libsql://", "https://");
-  }
-
-  return createClient({ url, authToken });
-}
 
 export async function GET() {
-  try {
-    const db = getDb();
-    const result = await db.execute(
-      "SELECT sc.id, sc.primary_name_raw as name, sc.hex_color as hex, s.name as source_name FROM source_colors sc JOIN sources s ON sc.source_id = s.id"
-    );
+  const url = process.env.TURSO_DATABASE_URL;
+  const token = process.env.TURSO_AUTH_TOKEN;
 
-    const colors = Array.from(result.rows).map((row: any) => ({
-      id: row.id,
-      name: row.name,
-      hex: row.hex,
-      source_name: row.source_name,
-    }));
+  if (!url || !token) {
+    return new Response(
+      JSON.stringify({ error: "Missing TURSO_DATABASE_URL or TURSO_AUTH_TOKEN" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
+  // Ensure URL is HTTP/HTTPS for raw fetch
+  const fetchUrl = url.replace("libsql://", "https://") + "/v2/pipeline";
+
+  try {
+    // We use raw fetch to bypass a known bug in @libsql/client where 
+    // it silently hangs/drops the promise on large row counts.
+    const response = await fetch(fetchUrl, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        requests: [
+          {
+            type: "execute",
+            stmt: {
+              sql: "SELECT sc.id, sc.primary_name_raw as name, sc.hex_color as hex, s.name as source_name FROM source_colors sc JOIN sources s ON sc.source_id = s.id",
+            },
+          },
+          { type: "close" },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Turso HTTP Error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    // Parse the Turso v2 HTTP response structure
+    const result = data.results[0]?.response?.result;
+    if (!result) {
+      throw new Error("Invalid Turso response format");
+    }
+
+    const cols = result.cols.map((c: any) => c.name);
+    const rows = result.rows;
+
+    const colors = rows.map((row: any[]) => {
+      const obj: Record<string, any> = {};
+      row.forEach((val, i) => {
+        obj[cols[i]] = val.value;
+      });
+      return obj;
+    });
 
     return new Response(JSON.stringify(colors), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=3600",
+      },
     });
   } catch (error: any) {
-    // At build time, a failure here will break the build — which is what we want.
-    // It forces us to fix the issue rather than deploying a broken endpoint.
     console.error("Failed to build colors.json:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
