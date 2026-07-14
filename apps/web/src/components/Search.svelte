@@ -186,7 +186,7 @@
   .color-name {
     padding: 1.5rem 1.5rem 0.5rem;
     font-family: var(--font-heading);
-    font-weight: 800;
+    font-weight: 900;
     font-size: 1.5rem;
     line-height: 1.1;
     color: #000;

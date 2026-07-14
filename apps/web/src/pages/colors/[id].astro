@@ -1,6 +1,7 @@
 ---
 export const prerender = false;
 import { db } from "@color-corpus/db";
+import Layout from '../../layouts/Layout.astro';
 
 const { id } = Astro.params;
 
@@ -26,88 +27,37 @@ if (result.rows.length === 0) {
 
 const color = result.rows[0];
 ---
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>{color.display_form || color.primary_name_raw} - Color Detail</title>
-    <link rel="stylesheet" href="https://unpkg.com/neobrutalismcss@latest" />
-    <style>
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        background-color: #f0f0f0;
-        margin: 0;
-        padding: 0;
-      }
-      .nb-header {
-        background-color: #ffffff;
-        border-bottom: 4px solid #000;
-        padding: 2rem;
-        text-align: center;
-      }
-      .container {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background: #fff;
-        border: 4px solid #000;
-        box-shadow: 8px 8px 0px #000;
-      }
-      .color-swatch {
-        height: 300px;
-        border: 4px solid #000;
-        margin-bottom: 2rem;
-      }
-      .meta-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-      }
-      .meta-item {
-        border: 2px solid #000;
-        padding: 1rem;
-      }
-      .meta-label {
-        font-weight: bold;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        color: #666;
-        margin-bottom: 0.5rem;
-      }
-      .meta-value {
-        font-size: 1.2rem;
-        font-weight: bold;
-      }
-    </style>
-  </head>
-  <body>
-    <header class="nb-header">
-      <h1>{color.display_form || color.primary_name_raw}</h1>
-      <a href="/">← Back Home</a>
-    </header>
 
-    <main class="container">
-      <div class="color-swatch" style={`background-color: ${color.hex_color};`}></div>
+<Layout title={`${color.display_form || color.primary_name_raw} - Color Detail`}>
+  <header class="nb-header">
+    <h1 style="font-weight: 900;">{color.display_form || color.primary_name_raw}</h1>
+    <a href="/" style="font-family: var(--font-mono); font-weight: bold; color: #000; text-decoration: none; border-bottom: 2px solid #000; padding-bottom: 2px;">← Back Home</a>
+  </header>
+
+  <main class="container">
+    <div style="max-width: 800px; margin: 0 auto; background: #fff; border: var(--border-thick); box-shadow: var(--shadow-brutal); padding: 2rem;">
+      <div style={`height: 300px; border: var(--border-thick); margin-bottom: 2rem; background-color: ${color.hex_color}; box-shadow: var(--shadow-brutal-active);`}></div>
       
-      <div class="meta-grid">
-        <div class="meta-item">
-          <div class="meta-label">Hex Code</div>
-          <div class="meta-value">{color.hex_color}</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div style="border: 2px solid #000; padding: 1rem; box-shadow: 2px 2px 0px #000;">
+          <div style="font-family: var(--font-mono); font-weight: bold; text-transform: uppercase; font-size: 0.8rem; color: #000; margin-bottom: 0.5rem; background: #DDF247; display: inline-block; padding: 2px 6px; border: 1px solid #000;">Hex Code</div>
+          <div style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700;">{color.hex_color}</div>
         </div>
-        <div class="meta-item">
-          <div class="meta-label">Source</div>
-          <div class="meta-value">
-            <a href={`/sources/${color.source_slug}`}>{color.source_name}</a>
+        <div style="border: 2px solid #000; padding: 1rem; box-shadow: 2px 2px 0px #000;">
+          <div style="font-family: var(--font-mono); font-weight: bold; text-transform: uppercase; font-size: 0.8rem; color: #000; margin-bottom: 0.5rem; background: #DDF247; display: inline-block; padding: 2px 6px; border: 1px solid #000;">Source</div>
+          <div style="font-family: var(--font-body); font-size: 1.2rem; font-weight: 900;">
+            <a href={`/sources/${color.source_slug}`} style="color: #000; text-decoration: underline;">{color.source_name}</a>
           </div>
         </div>
-        <div class="meta-item">
-          <div class="meta-label">Raw Name</div>
-          <div class="meta-value">{color.primary_name_raw}</div>
+        <div style="border: 2px solid #000; padding: 1rem; box-shadow: 2px 2px 0px #000;">
+          <div style="font-family: var(--font-mono); font-weight: bold; text-transform: uppercase; font-size: 0.8rem; color: #000; margin-bottom: 0.5rem; background: #DDF247; display: inline-block; padding: 2px 6px; border: 1px solid #000;">Raw Name</div>
+          <div style="font-family: var(--font-body); font-size: 1.2rem; font-weight: 900;">{color.primary_name_raw}</div>
         </div>
-        <div class="meta-item">
-          <div class="meta-label">Color ID</div>
-          <div class="meta-value" style="font-size: 0.9rem; word-break: break-all;">{color.id}</div>
+        <div style="border: 2px solid #000; padding: 1rem; box-shadow: 2px 2px 0px #000;">
+          <div style="font-family: var(--font-mono); font-weight: bold; text-transform: uppercase; font-size: 0.8rem; color: #000; margin-bottom: 0.5rem; background: #DDF247; display: inline-block; padding: 2px 6px; border: 1px solid #000;">Color ID</div>
+          <div style="font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700; word-break: break-all;">{color.id}</div>
         </div>
       </div>
-    </main>
-  </body>
-</html>
+    </div>
+  </main>
+</Layout>
