@@ -4,6 +4,8 @@
   let allColors: any[] = [];
   let displayedColors: any[] = [];
   let query = '';
+  let selectedSource = 'All';
+  let availableSources: string[] = [];
   let currentIndex = 0;
   const BATCH_SIZE = 50;
 
@@ -30,6 +32,11 @@
         return;
       }
       allColors = data;
+      const sourcesSet = new Set<string>();
+      for (const c of allColors) {
+        if (c.source_name) sourcesSet.add(c.source_name);
+      }
+      availableSources = ['All', ...Array.from(sourcesSet).sort()];
       displayedColors = allColors;
       loadMoreColors();
       
@@ -58,20 +65,32 @@
     }
   }
 
-  function handleSearch(e: Event) {
-    const target = e.target as HTMLInputElement;
-    query = target.value.toLowerCase().trim();
-    
-    if (query === '') {
-      displayedColors = allColors;
-    } else {
-      displayedColors = allColors.filter(c => 
+  function applyFilters() {
+    let filtered = allColors;
+    if (selectedSource !== 'All') {
+      filtered = filtered.filter(c => c.source_name === selectedSource);
+    }
+    if (query !== '') {
+      filtered = filtered.filter(c => 
         c.name.toLowerCase().includes(query) || 
         c.hex.toLowerCase().includes(query)
       );
     }
+    displayedColors = filtered;
     currentIndex = 0;
     loadMoreColors();
+  }
+
+  function handleSearch(e: Event) {
+    const target = e.target as HTMLInputElement;
+    query = target.value.toLowerCase().trim();
+    applyFilters();
+  }
+
+  function handleSourceChange(e: Event) {
+    const target = e.target as HTMLSelectElement;
+    selectedSource = target.value;
+    applyFilters();
   }
 
   function copyToClipboard(e: Event, hex: string) {
@@ -85,8 +104,15 @@
   }
 </script>
 
-<div class="search-container">
-  <input type="text" value={query} on:input={handleSearch} placeholder="Search for a color name or hex..." autocomplete="off">
+<div class="controls-container">
+  <input class="search-input" type="text" value={query} on:input={handleSearch} placeholder="Search for a color name or hex..." autocomplete="off">
+  <div class="filter-wrapper">
+    <select class="source-select" value={selectedSource} on:change={handleSourceChange}>
+      {#each availableSources as source}
+        <option value={source}>{source}</option>
+      {/each}
+    </select>
+  </div>
 </div>
 
 {#if loading}
@@ -115,16 +141,21 @@
 <div class="toast" class:show={showToast}>{toastMessage}</div>
 
 <style>
-  .search-container {
+  .controls-container {
     margin: -5rem auto 4rem;
     text-align: center;
     position: relative;
     z-index: 10;
     padding: 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 1000px;
   }
-  .search-container input {
-    width: 100%;
-    max-width: 800px;
+  .search-input {
+    flex: 1;
+    min-width: 300px;
     padding: 1.5rem 2rem;
     font-family: var(--font-mono);
     font-size: 1.5rem;
@@ -137,14 +168,43 @@
     transition: box-shadow 0.2s ease, transform 0.2s ease;
     outline: none;
   }
-  .search-container input:focus {
+  .search-input:focus {
     transform: translate(-4px, -4px);
     box-shadow: var(--shadow-brutal-hover);
     background: #f8f8f8;
   }
-  .search-container input::placeholder {
+  .search-input::placeholder {
     color: #999;
     font-weight: 400;
+  }
+  .filter-wrapper {
+    flex-shrink: 0;
+  }
+  .source-select {
+    height: 100%;
+    padding: 0 2rem;
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #000;
+    background: #DDF247;
+    border: var(--border-thick);
+    border-radius: 0;
+    box-shadow: var(--shadow-brutal);
+    cursor: pointer;
+    outline: none;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.5rem top 50%;
+    background-size: 1rem auto;
+    padding-right: 3.5rem;
+  }
+  .source-select:focus, .source-select:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: var(--shadow-brutal-hover);
   }
 
   .color-grid {
