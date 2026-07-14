@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "import:seed": "tsx importer.ts"
+    "import:seed": "tsx importer.ts",
+    "seed": "tsx index.ts"
   },
   "dependencies": {
     "@color-corpus/db": "workspace:*",
