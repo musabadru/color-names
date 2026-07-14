@@ -32,7 +32,7 @@ async function run() {
   // 3. Prepare bulk insert
   console.log("Preparing batch inserts...");
   
-  const CHUNK_SIZE = 500;
+  const CHUNK_SIZE = 100;
   for (let i = 0; i < data.length; i += CHUNK_SIZE) {
     const chunk = data.slice(i, i + CHUNK_SIZE);
     const stmts: Array<{sql: string, args: any[]}> = [];

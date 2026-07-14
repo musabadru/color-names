@@ -1,7 +1,8 @@
-import { createClient } from "@libsql/client";
+import { createClient } from "@libsql/client/web";
 
-// In development, this uses a local file. In production, this can connect to Turso.
+const url = process.env.TURSO_DATABASE_URL;
+
 export const db = createClient({
-  url: process.env.TURSO_DATABASE_URL || "file:../../local.db",
+  url: url || "libsql://missing-database-url",
   authToken: process.env.TURSO_AUTH_TOKEN,
 });
