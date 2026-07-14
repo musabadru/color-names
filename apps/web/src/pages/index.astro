@@ -7,31 +7,82 @@ import Search from '../components/Search.svelte';
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Color Names</title>
-    <!-- NeoBrutalism CSS -->
+    <title>Color Names — Neo-Brutalist Color Palette</title>
+    
+    <!-- Google Fonts for Editorial Brutalism -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- NeoBrutalism CSS Base -->
     <link rel="stylesheet" href="https://unpkg.com/neobrutalismcss@latest" />
+    
     <style>
+      :root {
+        --font-heading: 'Syne', sans-serif;
+        --font-body: 'Public Sans', sans-serif;
+        --font-mono: 'Space Mono', monospace;
+        
+        --color-bg: #F4F0EA; /* Editorial pale beige background */
+        --color-text: #000000;
+        
+        --border-thick: 4px solid #000;
+        --shadow-brutal: 6px 6px 0px #000;
+        --shadow-brutal-hover: 10px 10px 0px #000;
+        --shadow-brutal-active: 2px 2px 0px #000;
+      }
+
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        background-color: #f0f0f0;
+        font-family: var(--font-body);
+        background-color: var(--color-bg);
+        background-image: radial-gradient(#000000 1px, transparent 1px);
+        background-size: 20px 20px;
+        color: var(--color-text);
         margin: 0;
         padding: 0;
       }
+
       .nb-header {
-        background-color: #ffffff;
-        border-bottom: 4px solid #000;
-        padding: 2rem;
+        background-color: #fff;
+        border-bottom: var(--border-thick);
+        padding: 4rem 2rem;
         text-align: center;
+        box-shadow: 0px 8px 0px #000;
+        margin-bottom: 3rem;
       }
+
       .nb-header h1 {
-        font-size: 3rem;
-        margin-bottom: 1rem;
+        font-family: var(--font-heading);
+        font-weight: 800;
+        font-size: 4.5rem;
+        letter-spacing: -0.05em;
+        margin: 0 0 1rem 0;
         text-transform: uppercase;
+        line-height: 1;
       }
-      .container {
-        max-width: 1200px;
+
+      .nb-header p {
+        font-family: var(--font-body);
+        font-size: 1.25rem;
+        max-width: 600px;
         margin: 0 auto;
-        padding: 2rem;
+        font-weight: 400;
+        line-height: 1.5;
+        border: 2px solid #000;
+        padding: 1rem;
+        background: #DDF247; /* Brutalist yellow highlight */
+        box-shadow: 4px 4px 0px #000;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem 4rem;
+      }
+
+      /* Global box sizing for easier component styling */
+      *, *::before, *::after {
+        box-sizing: border-box;
       }
     </style>
   </head>

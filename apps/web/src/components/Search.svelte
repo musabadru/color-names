@@ -116,94 +116,155 @@
 
 <style>
   .search-container {
-    margin-bottom: 2rem;
+    margin: -5rem auto 4rem;
     text-align: center;
+    position: relative;
+    z-index: 10;
+    padding: 0 1rem;
   }
   .search-container input {
     width: 100%;
-    max-width: 600px;
-    padding: 1rem;
-    font-size: 1.2rem;
-    border: 3px solid #000;
+    max-width: 800px;
+    padding: 1.5rem 2rem;
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000;
+    background: #fff;
+    border: var(--border-thick);
     border-radius: 0;
-    box-shadow: 4px 4px 0px #000;
+    box-shadow: var(--shadow-brutal);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    outline: none;
   }
+  .search-container input:focus {
+    transform: translate(-4px, -4px);
+    box-shadow: var(--shadow-brutal-hover);
+    background: #f8f8f8;
+  }
+  .search-container input::placeholder {
+    color: #999;
+    font-weight: 400;
+  }
+
   .color-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 3rem;
   }
   .color-card {
-    border: 3px solid #000;
+    border: var(--border-thick);
     background-color: #fff;
     cursor: pointer;
-    box-shadow: 5px 5px 0px #000;
-    transition: transform 0.1s, box-shadow 0.1s;
+    box-shadow: var(--shadow-brutal);
+    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
     display: flex;
     flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
   }
   .color-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 7px 7px 0px #000;
+    transform: translate(-4px, -4px);
+    box-shadow: var(--shadow-brutal-hover);
   }
   .color-card:active {
     transform: translate(2px, 2px);
-    box-shadow: 3px 3px 0px #000;
+    box-shadow: var(--shadow-brutal-active);
   }
+
   .color-swatch {
-    height: 150px;
-    border-bottom: 3px solid #000;
+    height: 180px;
+    border-bottom: var(--border-thick);
+    transition: filter 0.2s;
   }
+  .color-card:hover .color-swatch {
+    filter: brightness(1.05) contrast(1.1);
+  }
+
   .color-name {
-    padding: 1rem 1rem 0.2rem;
-    font-weight: bold;
+    padding: 1.5rem 1.5rem 0.5rem;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 1.1;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+
+  .color-source {
+    padding: 0 1.5rem 1rem;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #000;
+    background: #DDF247;
+    display: inline-block;
+    align-self: flex-start;
+    margin: 0 1.5rem 1rem;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0px #000;
+  }
+
+  .color-hex {
+    padding: 0 1.5rem 1.5rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
     font-size: 1.2rem;
     color: #000;
+    margin-top: auto;
   }
-  .color-source {
-    padding: 0 1rem 0.5rem;
-    font-size: 0.8rem;
+
+  .copy-btn {
+    margin: 0;
+    padding: 1rem;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-top: var(--border-thick);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1rem;
     text-transform: uppercase;
-    color: #666;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
   }
-  .color-hex {
-    padding: 0 1rem 1rem;
-    color: #333;
-    font-family: monospace;
+  .color-card:hover .copy-btn {
+    background: #DDF247;
+    color: #000;
   }
+
   .toast {
     position: fixed;
     bottom: -100px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #000;
-    color: #fff;
-    padding: 1rem 2rem;
-    border-radius: 0;
-    transition: bottom 0.3s ease;
+    background-color: #DDF247;
+    color: #000;
+    padding: 1.5rem 3rem;
+    border: var(--border-thick);
+    box-shadow: var(--shadow-brutal-hover);
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 1000;
-    font-weight: bold;
-    border: 2px solid #000;
-    box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
   }
   .toast.show {
-    bottom: 20px;
+    bottom: 40px;
   }
+
   .loading, .no-results {
     text-align: center;
-    font-size: 1.5rem;
-    margin-top: 3rem;
-  }
-  .copy-btn {
-    margin: 0 1rem 1rem;
-    padding: 0.5rem;
-    background: #000;
-    color: #fff;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .copy-btn:hover {
-    background: #333;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-top: 4rem;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
   }
 </style>
